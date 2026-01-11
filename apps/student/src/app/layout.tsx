@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -7,16 +8,25 @@ export const metadata: Metadata = {
   keywords: ["jobs", "careers", "Ghana", "employment", "training", "education"],
 };
 
+const clerkPubKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+const hasValidClerkKey = clerkPubKey && clerkPubKey.startsWith("pk_") && !clerkPubKey.includes("placeholder");
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
+  const content = (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen bg-background font-body antialiased">
         {children}
       </body>
     </html>
   );
+
+  if (hasValidClerkKey) {
+    return <ClerkProvider>{content}</ClerkProvider>;
+  }
+
+  return content;
 }
