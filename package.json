@@ -18,5 +18,8 @@
   "packageManager": "pnpm@9.15.0",
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "@radix-ui/react-select": "^2.2.6"
   }
 }

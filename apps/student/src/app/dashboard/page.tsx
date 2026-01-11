@@ -1,4 +1,8 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useUser, useAuth } from "@clerk/nextjs";
 import { 
   ArrowRight, 
   FileText, 
@@ -8,8 +12,9 @@ import {
   GraduationCap,
   Briefcase,
   User,
-  LogOut,
-  ChevronRight
+  Loader2,
+  ChevronRight,
+  Building2
 } from "lucide-react";
 import { Button } from "@workstream/ui/components/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@workstream/ui/components/card";
@@ -17,8 +22,24 @@ import { Badge } from "@workstream/ui/components/badge";
 import { Progress } from "@workstream/ui/components/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@workstream/ui/components/avatar";
 import { Separator } from "@workstream/ui/components/separator";
+import { api, type Program } from "../../lib/api";
+
+interface Application {
+  id: string;
+  applicationNumber: string;
+  status: string;
+  createdAt: string;
+  program: {
+    title: string;
+    slug: string;
+    employer: { name: string };
+  };
+}
 
 function DashboardNav() {
+  const { user } = useUser();
+  const initials = user ? `${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}` : "";
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background">
       <div className="container-page flex h-16 items-center justify-between">
@@ -36,8 +57,8 @@ function DashboardNav() {
             </Link>
           </Button>
           <Avatar className="h-9 w-9">
-            <AvatarImage src="" />
-            <AvatarFallback>KA</AvatarFallback>
+            <AvatarImage src={user?.imageUrl || ""} />
+            <AvatarFallback>{initials || "U"}</AvatarFallback>
           </Avatar>
         </div>
       </div>
@@ -89,30 +110,15 @@ function ProfileCompletionCard() {
   );
 }
 
-function ApplicationsCard() {
-  const applications = [
-    {
-      id: "1",
-      program: "Software Engineering Track",
-      employer: "TechCorp Ghana",
-      status: "under_review",
-      appliedAt: "Jan 5, 2026",
-    },
-    {
-      id: "2",
-      program: "Data Analytics Cohort",
-      employer: "FinServ Africa",
-      status: "interview_scheduled",
-      appliedAt: "Dec 28, 2025",
-      interviewDate: "Jan 15, 2026",
-    },
-  ];
-  
-  const statusConfig = {
-    under_review: { label: "Under Review", variant: "warning" as const, icon: Clock },
-    interview_scheduled: { label: "Interview Scheduled", variant: "success" as const, icon: CheckCircle },
-    accepted: { label: "Accepted", variant: "success" as const, icon: CheckCircle },
-    rejected: { label: "Not Selected", variant: "destructive" as const, icon: AlertCircle },
+function ApplicationsCard({ applications }: { applications: Application[] }) {
+  const statusConfig: Record<string, { label: string; variant: "warning" | "success" | "destructive" | "secondary"; icon: React.ComponentType<{className?: string}> }> = {
+    DRAFT: { label: "Draft", variant: "secondary", icon: FileText },
+    SUBMITTED: { label: "Submitted", variant: "secondary", icon: Clock },
+    UNDER_REVIEW: { label: "Under Review", variant: "warning", icon: Clock },
+    SHORTLISTED: { label: "Shortlisted", variant: "success", icon: CheckCircle },
+    INTERVIEW_SCHEDULED: { label: "Interview Scheduled", variant: "success", icon: CheckCircle },
+    ACCEPTED: { label: "Accepted", variant: "success", icon: CheckCircle },
+    REJECTED: { label: "Not Selected", variant: "destructive", icon: AlertCircle },
   };
   
   return (
@@ -121,7 +127,7 @@ function ApplicationsCard() {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-lg">My Applications</CardTitle>
-            <CardDescription>{applications.length} active applications</CardDescription>
+            <CardDescription>{applications.length} application{applications.length !== 1 ? "s" : ""}</CardDescription>
           </div>
           <Button variant="ghost" size="sm" asChild>
             <Link href="/applications">View All</Link>
@@ -129,35 +135,42 @@ function ApplicationsCard() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {applications.map((app) => {
-          const status = statusConfig[app.status as keyof typeof statusConfig];
-          return (
-            <div 
-              key={app.id}
-              className="p-4 rounded-xl border border-border hover:border-accent/30 transition-colors"
-            >
-              <div className="flex items-start justify-between mb-2">
-                <div>
-                  <h4 className="font-medium">{app.program}</h4>
-                  <p className="text-sm text-muted-foreground">{app.employer}</p>
+        {applications.length === 0 ? (
+          <div className="text-center py-6">
+            <FileText className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+            <p className="text-sm text-muted-foreground">No applications yet</p>
+          </div>
+        ) : (
+          applications.slice(0, 3).map((app) => {
+            const status = statusConfig[app.status] || statusConfig.DRAFT;
+            const StatusIcon = status.icon;
+            return (
+              <Link 
+                key={app.id}
+                href={`/applications/${app.id}`}
+                className="block p-4 rounded-xl border border-border hover:border-accent/30 transition-colors"
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    <h4 className="font-medium">{app.program.title}</h4>
+                    <p className="text-sm text-muted-foreground">{app.program.employer.name}</p>
+                  </div>
+                  <Badge variant={status.variant}>
+                    <StatusIcon className="h-3 w-3 mr-1" />
+                    {status.label}
+                  </Badge>
                 </div>
-                <Badge variant={status.variant}>
-                  <status.icon className="h-3 w-3 mr-1" />
-                  {status.label}
-                </Badge>
-              </div>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <span>Applied {app.appliedAt}</span>
-                {app.interviewDate && (
-                  <>
-                    <Separator orientation="vertical" className="h-4" />
-                    <span className="text-success-600 font-medium">Interview: {app.interviewDate}</span>
-                  </>
-                )}
-              </div>
-            </div>
-          );
-        })}
+                <div className="text-sm text-muted-foreground">
+                  Applied {new Date(app.createdAt).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric"
+                  })}
+                </div>
+              </Link>
+            );
+          })
+        )}
       </CardContent>
       <CardFooter>
         <Button variant="outline" className="w-full" asChild>
@@ -171,52 +184,42 @@ function ApplicationsCard() {
   );
 }
 
-function RecommendedProgramsCard() {
-  const programs = [
-    {
-      id: "3",
-      title: "Customer Success Program",
-      employer: "GlobalTech",
-      duration: "6 weeks",
-      matchScore: 92,
-    },
-    {
-      id: "4",
-      title: "Product Management Track",
-      employer: "StartupHub",
-      duration: "10 weeks",
-      matchScore: 87,
-    },
-  ];
-  
+function RecommendedProgramsCard({ programs }: { programs: Program[] }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Recommended for You</CardTitle>
-        <CardDescription>Based on your profile and interests</CardDescription>
+        <CardTitle className="text-lg">Open Programs</CardTitle>
+        <CardDescription>Available training programs</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {programs.map((program) => (
-          <Link 
-            key={program.id}
-            href={`/programs/${program.id}`}
-            className="flex items-center justify-between p-4 rounded-xl border border-border hover:border-accent/30 hover:shadow-md transition-all group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-xl bg-secondary flex items-center justify-center">
-                <Briefcase className="h-6 w-6 text-muted-foreground" />
-              </div>
-              <div>
-                <h4 className="font-medium group-hover:text-accent transition-colors">{program.title}</h4>
-                <p className="text-sm text-muted-foreground">{program.employer} • {program.duration}</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <span className="text-2xl font-display font-bold text-accent">{program.matchScore}%</span>
-              <p className="text-xs text-muted-foreground">match</p>
-            </div>
-          </Link>
-        ))}
+        {programs.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center py-4">No programs available</p>
+        ) : (
+          programs.slice(0, 3).map((program) => {
+            const durationMonths = Math.round(program.durationWeeks / 4.33);
+            return (
+              <Link 
+                key={program.id}
+                href={`/programs/${program.slug}`}
+                className="flex items-center justify-between p-4 rounded-xl border border-border hover:border-accent/30 hover:shadow-md transition-all group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-xl bg-secondary flex items-center justify-center">
+                    <Building2 className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium group-hover:text-accent transition-colors">{program.title}</h4>
+                    <p className="text-sm text-muted-foreground">{program.employer.name} • {durationMonths} months</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-lg font-bold text-success-600">{program.availableSlots}</span>
+                  <p className="text-xs text-muted-foreground">spots</p>
+                </div>
+              </Link>
+            );
+          })
+        )}
       </CardContent>
     </Card>
   );
@@ -249,6 +252,56 @@ function QuickActionsCard() {
 }
 
 export default function DashboardPage() {
+  const { user, isLoaded: userLoaded } = useUser();
+  const { getToken, isSignedIn } = useAuth();
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        // Fetch programs (public)
+        const programsResponse = await api.programs.list({ status: "OPEN", limit: 3 });
+        setPrograms(programsResponse.programs);
+
+        // Fetch applications (requires auth)
+        if (isSignedIn) {
+          const token = await getToken();
+          if (token) {
+            const appsResponse = await fetch(
+              `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/applications`,
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+            if (appsResponse.ok) {
+              const appsData = await appsResponse.json();
+              setApplications(appsData.applications || []);
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Failed to fetch dashboard data:", e);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (userLoaded) {
+      fetchData();
+    }
+  }, [userLoaded, isSignedIn, getToken]);
+
+  if (!userLoaded || loading) {
+    return (
+      <>
+        <DashboardNav />
+        <main className="pt-24 pb-12 flex items-center justify-center min-h-screen">
+          <Loader2 className="h-8 w-8 animate-spin text-accent" />
+        </main>
+      </>
+    );
+  }
+
   return (
     <>
       <DashboardNav />
@@ -257,7 +310,7 @@ export default function DashboardPage() {
           {/* Welcome Header */}
           <div className="mb-8 stagger-children">
             <h1 className="text-3xl font-display font-bold tracking-tight mb-2">
-              Welcome back, Kofi
+              Welcome back{user?.firstName ? `, ${user.firstName}` : ""}
             </h1>
             <p className="text-muted-foreground">
               Here&apos;s what&apos;s happening with your applications
@@ -269,12 +322,12 @@ export default function DashboardPage() {
             {/* Main Column */}
             <div className="lg:col-span-2 space-y-6">
               <ProfileCompletionCard />
-              <ApplicationsCard />
+              <ApplicationsCard applications={applications} />
             </div>
             
             {/* Sidebar */}
             <div className="space-y-6">
-              <RecommendedProgramsCard />
+              <RecommendedProgramsCard programs={programs} />
               <QuickActionsCard />
             </div>
           </div>

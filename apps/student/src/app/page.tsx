@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { ArrowRight, Briefcase, GraduationCap, TrendingUp, Shield, Users, CheckCircle } from "lucide-react";
+import { ArrowRight, Briefcase, GraduationCap, TrendingUp, Shield, Users, CheckCircle, Clock, Building2 } from "lucide-react";
 import { Button } from "@workstream/ui/components/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workstream/ui/components/card";
 import { Badge } from "@workstream/ui/components/badge";
+import { api, type Program } from "../lib/api";
 
 function Navbar() {
   return (
@@ -167,31 +168,7 @@ function HowItWorksSection() {
   );
 }
 
-function ProgramsPreviewSection() {
-  const programs = [
-    {
-      title: "Software Engineering Track",
-      employer: "TechCorp Ghana",
-      duration: "12 weeks",
-      spots: 15,
-      tags: ["Full-time", "Remote-friendly"],
-    },
-    {
-      title: "Data Analytics Cohort",
-      employer: "FinServ Africa",
-      duration: "8 weeks",
-      spots: 10,
-      tags: ["Part-time", "Accra"],
-    },
-    {
-      title: "Customer Success Program",
-      employer: "GlobalTech",
-      duration: "6 weeks",
-      spots: 20,
-      tags: ["Full-time", "Hybrid"],
-    },
-  ];
-
+function ProgramsPreviewSection({ programs }: { programs: Program[] }) {
   return (
     <section id="programs" className="py-24 md:py-36">
       <div className="container-page">
@@ -213,33 +190,52 @@ function ProgramsPreviewSection() {
           </Button>
         </div>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {programs.map((program) => (
-            <Card key={program.title} variant="default" className="group hover:border-accent/30 hover:shadow-lg transition-all duration-300 p-2">
-              <CardHeader className="space-y-4 pb-6">
-                <div className="flex flex-wrap gap-3">
-                  {program.tags.map((tag) => (
-                    <Badge key={tag} variant="outline" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-                <div className="space-y-3">
-                  <CardTitle className="text-xl group-hover:text-accent transition-colors">
-                    {program.title}
-                  </CardTitle>
-                  <CardDescription className="text-base">by {program.employer}</CardDescription>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-6 border-t border-border/50">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-foreground-secondary">{program.duration}</span>
-                  <span className="font-semibold text-success-600">{program.spots} spots left</span>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        {programs.length === 0 ? (
+          <Card className="p-8 text-center">
+            <p className="text-muted-foreground">No programs available at the moment. Check back soon!</p>
+          </Card>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {programs.slice(0, 3).map((program) => {
+              const durationMonths = Math.round(program.durationWeeks / 4.33);
+              return (
+                <Card key={program.id} variant="default" className="group hover:border-accent/30 hover:shadow-lg transition-all duration-300 p-2">
+                  <CardHeader className="space-y-4 pb-6">
+                    <div className="flex flex-wrap gap-3">
+                      <Badge variant="outline" className="text-xs">
+                        {program.field}
+                      </Badge>
+                      {program.hasInternship && (
+                        <Badge variant="outline" className="text-xs">Co-op</Badge>
+                      )}
+                      {program.isFunded && (
+                        <Badge className="bg-success-600/10 text-success-600 border-success-600/20 text-xs">Funded</Badge>
+                      )}
+                    </div>
+                    <div className="space-y-3">
+                      <CardTitle className="text-xl group-hover:text-accent transition-colors">
+                        {program.title}
+                      </CardTitle>
+                      <CardDescription className="text-base flex items-center gap-1">
+                        <Building2 className="h-4 w-4" />
+                        {program.employer.name}
+                      </CardDescription>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-6 border-t border-border/50">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-foreground-secondary flex items-center gap-1">
+                        <Clock className="h-4 w-4" />
+                        {durationMonths} months
+                      </span>
+                      <span className="font-semibold text-success-600">{program.availableSlots} spots left</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -300,14 +296,23 @@ function Footer() {
   );
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  let programs: Program[] = [];
+  
+  try {
+    const response = await api.programs.list({ status: "OPEN", limit: 3 });
+    programs = response.programs;
+  } catch (e) {
+    console.error("Failed to fetch programs:", e);
+  }
+
   return (
     <>
       <Navbar />
       <main>
         <HeroSection />
         <HowItWorksSection />
-        <ProgramsPreviewSection />
+        <ProgramsPreviewSection programs={programs} />
         <CTASection />
       </main>
       <Footer />

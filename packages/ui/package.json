@@ -2,7 +2,9 @@
   "name": "@workstream/ui",
   "version": "0.0.1",
   "private": true,
-  "sideEffects": ["**/*.css"],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "exports": {
     "./globals.css": "./src/styles/globals.css",
     "./lib/*": "./src/lib/*.ts",
@@ -17,20 +19,20 @@
     "typescript": "latest"
   },
   "dependencies": {
-    "class-variance-authority": "latest",
-    "clsx": "latest",
-    "tailwind-merge": "latest",
-    "lucide-react": "latest",
-    "@radix-ui/react-slot": "latest",
+    "@radix-ui/react-avatar": "latest",
     "@radix-ui/react-dialog": "latest",
     "@radix-ui/react-dropdown-menu": "latest",
     "@radix-ui/react-label": "latest",
-    "@radix-ui/react-select": "latest",
+    "@radix-ui/react-progress": "latest",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-separator": "latest",
+    "@radix-ui/react-slot": "latest",
     "@radix-ui/react-tabs": "latest",
     "@radix-ui/react-toast": "latest",
-    "@radix-ui/react-avatar": "latest",
-    "@radix-ui/react-progress": "latest",
-    "@radix-ui/react-separator": "latest"
+    "class-variance-authority": "latest",
+    "clsx": "latest",
+    "lucide-react": "latest",
+    "tailwind-merge": "latest"
   },
   "peerDependencies": {
     "react": ">=18",
