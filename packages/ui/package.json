@@ -1,0 +1,39 @@
+{
+  "name": "@workstream/ui",
+  "version": "0.0.1",
+  "private": true,
+  "sideEffects": ["**/*.css"],
+  "exports": {
+    "./globals.css": "./src/styles/globals.css",
+    "./lib/*": "./src/lib/*.ts",
+    "./components/*": "./src/components/*.tsx"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0"
+  },
+  "devDependencies": {
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "typescript": "latest"
+  },
+  "dependencies": {
+    "class-variance-authority": "latest",
+    "clsx": "latest",
+    "tailwind-merge": "latest",
+    "lucide-react": "latest",
+    "@radix-ui/react-slot": "latest",
+    "@radix-ui/react-dialog": "latest",
+    "@radix-ui/react-dropdown-menu": "latest",
+    "@radix-ui/react-label": "latest",
+    "@radix-ui/react-select": "latest",
+    "@radix-ui/react-tabs": "latest",
+    "@radix-ui/react-toast": "latest",
+    "@radix-ui/react-avatar": "latest",
+    "@radix-ui/react-progress": "latest",
+    "@radix-ui/react-separator": "latest"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  }
+}

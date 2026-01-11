@@ -1,0 +1,22 @@
+{
+  "name": "workstream-client",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "clean": "turbo clean && rm -rf node_modules",
+    "dev:student": "turbo dev --filter=@workstream/student",
+    "dev:employer": "turbo dev --filter=@workstream/employer",
+    "dev:university": "turbo dev --filter=@workstream/university",
+    "dev:admin": "turbo dev --filter=@workstream/admin"
+  },
+  "devDependencies": {
+    "turbo": "latest",
+    "typescript": "latest"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20"
+  }
+}
