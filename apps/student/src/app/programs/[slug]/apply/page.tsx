@@ -334,7 +334,7 @@ export default function ApplicationPage({ params }: Props) {
                 <Textarea
                   id="motivation"
                   placeholder="Explain why you want to join this program, what you hope to learn, and how it aligns with your career goals..."
-                  className="min-h-50"
+                  className="min-h-50" // min-h-[200px]
                   value={motivationLetter}
                   onChange={(e) => setMotivationLetter(e.target.value)}
                 />
