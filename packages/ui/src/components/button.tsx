@@ -12,37 +12,39 @@ const buttonVariants = cva(
     "disabled:pointer-events-none disabled:opacity-50",
     "active:scale-[0.98]",
     "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+    "border-2 border-amber-500/60",
   ],
   {
     variants: {
       variant: {
         default: [
           "bg-primary text-primary-foreground",
-          "hover:bg-primary/90 hover:scale-[1.02] hover:shadow-md",
+          "hover:bg-primary/90 hover:scale-[1.02] hover:shadow-md hover:border-amber-500",
         ],
         destructive: [
           "bg-destructive text-destructive-foreground",
-          "hover:bg-destructive/90 hover:scale-[1.02]",
+          "hover:bg-destructive/90 hover:scale-[1.02] hover:border-amber-500",
         ],
         outline: [
-          "border-2 border-border bg-background",
-          "hover:bg-secondary hover:border-foreground/20 hover:scale-[1.02]",
+          "bg-background text-foreground",
+          "hover:bg-secondary hover:scale-[1.02] hover:border-amber-500",
         ],
         secondary: [
           "bg-secondary text-secondary-foreground",
-          "hover:bg-secondary/80 hover:scale-[1.02]",
+          "hover:bg-secondary/80 hover:scale-[1.02] hover:border-amber-500",
         ],
         ghost: [
-          "hover:bg-secondary hover:text-secondary-foreground",
+          "border-transparent",
+          "hover:bg-secondary hover:text-secondary-foreground hover:border-amber-500/60",
         ],
         link: [
+          "border-transparent",
           "text-foreground underline-offset-4",
           "hover:underline",
         ],
         accent: [
-          "bg-accent text-accent-foreground",
-          "hover:bg-accent/90 hover:scale-[1.02] hover:shadow-lg",
-          "shadow-md",
+          "bg-transparent text-foreground",
+          "hover:bg-amber-500/10 hover:scale-[1.02] hover:border-amber-500",
         ],
       },
       size: {

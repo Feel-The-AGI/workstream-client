@@ -42,34 +42,36 @@ function Navbar() {
 
 function HeroSection() {
   return (
-    <section className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
+    <section className="relative pt-36 pb-24 md:pt-44 md:pb-36 overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-accent/5 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-b from-accent/5 via-transparent to-transparent" />
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
       </div>
       
       <div className="container-page">
         <div className="max-w-4xl mx-auto text-center stagger-children">
-          <Badge variant="accent" className="mb-6">
-            Now accepting applications
-          </Badge>
+          <div className="inline-block mb-8">
+            <Badge variant="accent" className="px-4 py-2 text-sm">
+              Now accepting applications
+            </Badge>
+          </div>
           
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight mb-8 leading-tight">
             Your Career Starts With{" "}
-            <span className="text-gradient">Guaranteed Interviews</span>
+            <span className="text-gradient">Guaranteed Placements</span>
           </h1>
           
-          <p className="text-lg md:text-xl text-foreground-secondary max-w-2xl mx-auto mb-10">
+          <p className="text-lg md:text-xl text-foreground-secondary max-w-2xl mx-auto mb-12 leading-relaxed">
             Join curated training programs backed by real employer demand. 
             Complete the program, nail the interview, land the job. 
             That&apos;s the Workstream guarantee.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-5 justify-center items-center">
             <Button variant="accent" size="xl" asChild>
-              <Link href="/sign-up" className="gap-2">
+              <Link href="/sign-up" className="flex items-center gap-3">
                 Apply to Programs
                 <ArrowRight className="h-5 w-5" />
               </Link>
@@ -80,17 +82,17 @@ function HeroSection() {
           </div>
           
           {/* Trust indicators */}
-          <div className="flex flex-wrap items-center justify-center gap-6 mt-12 pt-12 border-t border-border/50">
-            <div className="flex items-center gap-2 text-sm text-foreground-secondary">
-              <CheckCircle className="h-4 w-4 text-success-500" />
-              <span>90%+ placement rate</span>
+          <div className="flex flex-wrap items-center justify-center gap-8 mt-16 pt-12 border-t border-border/50">
+            <div className="flex items-center gap-3 text-sm text-foreground-secondary">
+              <CheckCircle className="h-5 w-5 text-success-500" />
+              <span>100% placement rate</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-foreground-secondary">
-              <Shield className="h-4 w-4 text-success-500" />
+            <div className="flex items-center gap-3 text-sm text-foreground-secondary">
+              <Shield className="h-5 w-5 text-success-500" />
               <span>Employer-backed programs</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-foreground-secondary">
-              <Users className="h-4 w-4 text-success-500" />
+            <div className="flex items-center gap-3 text-sm text-foreground-secondary">
+              <Users className="h-5 w-5 text-success-500" />
               <span>500+ graduates placed</span>
             </div>
           </div>
@@ -123,39 +125,39 @@ function HowItWorksSection() {
   ];
 
   return (
-    <section id="how-it-works" className="py-20 md:py-32 bg-secondary/30">
+    <section id="how-it-works" className="py-24 md:py-36 bg-secondary/30">
       <div className="container-page">
-        <div className="text-center max-w-2xl mx-auto mb-16 stagger-children">
-          <Badge variant="secondary" className="mb-4">How It Works</Badge>
-          <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight mb-4">
+        <div className="text-center max-w-2xl mx-auto mb-20 stagger-children">
+          <Badge variant="secondary" className="mb-6 px-4 py-2">How It Works</Badge>
+          <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight mb-6">
             From Application to Employment
           </h2>
-          <p className="text-foreground-secondary">
+          <p className="text-foreground-secondary text-lg">
             A streamlined path that eliminates the guesswork from job hunting
           </p>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 lg:gap-10">
           {steps.map((step, index) => (
-            <Card key={step.number} variant="elevated" className="relative group hover:shadow-xl transition-all duration-300">
-              <CardHeader>
-                <div className="flex items-center gap-4 mb-2">
-                  <span className="font-mono text-4xl font-bold text-accent/30 group-hover:text-accent transition-colors">
+            <Card key={step.number} variant="elevated" className="relative group hover:shadow-xl transition-all duration-300 p-2">
+              <CardHeader className="pb-4">
+                <div className="flex items-center gap-5 mb-4">
+                  <span className="font-mono text-5xl font-bold text-accent/20 group-hover:text-accent/40 transition-colors">
                     {step.number}
                   </span>
-                  <div className="h-12 w-12 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
-                    <step.icon className="h-6 w-6 text-accent" />
+                  <div className="h-14 w-14 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                    <step.icon className="h-7 w-7 text-accent" />
                   </div>
                 </div>
-                <CardTitle className="text-xl">{step.title}</CardTitle>
+                <CardTitle className="text-xl mb-2">{step.title}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base">{step.description}</CardDescription>
+              <CardContent className="pt-0">
+                <CardDescription className="text-base leading-relaxed">{step.description}</CardDescription>
               </CardContent>
               
               {/* Connector line */}
               {index < steps.length - 1 && (
-                <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-border" />
+                <div className="hidden lg:block absolute top-1/2 -right-5 w-10 h-0.5 bg-border" />
               )}
             </Card>
           ))}
@@ -191,46 +193,48 @@ function ProgramsPreviewSection() {
   ];
 
   return (
-    <section id="programs" className="py-20 md:py-32">
+    <section id="programs" className="py-24 md:py-36">
       <div className="container-page">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-14">
           <div className="stagger-children">
-            <Badge variant="secondary" className="mb-4">Featured Programs</Badge>
-            <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight mb-2">
+            <Badge variant="secondary" className="mb-6 px-4 py-2">Featured Programs</Badge>
+            <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight mb-4">
               Open Programs
             </h2>
-            <p className="text-foreground-secondary max-w-xl">
+            <p className="text-foreground-secondary max-w-xl text-lg">
               Each program is backed by committed employers with real job openings
             </p>
           </div>
-          <Button variant="outline" asChild>
-            <Link href="/programs" className="gap-2">
+          <Button variant="outline" size="lg" asChild>
+            <Link href="/programs" className="flex items-center gap-3">
               View All Programs
               <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
         </div>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {programs.map((program) => (
-            <Card key={program.title} variant="default" className="group hover:border-accent/30 hover:shadow-lg transition-all duration-300">
-              <CardHeader>
-                <div className="flex gap-2 mb-3">
+            <Card key={program.title} variant="default" className="group hover:border-accent/30 hover:shadow-lg transition-all duration-300 p-2">
+              <CardHeader className="space-y-4 pb-6">
+                <div className="flex flex-wrap gap-3">
                   {program.tags.map((tag) => (
                     <Badge key={tag} variant="outline" className="text-xs">
                       {tag}
                     </Badge>
                   ))}
                 </div>
-                <CardTitle className="text-lg group-hover:text-accent transition-colors">
-                  {program.title}
-                </CardTitle>
-                <CardDescription>by {program.employer}</CardDescription>
+                <div className="space-y-3">
+                  <CardTitle className="text-xl group-hover:text-accent transition-colors">
+                    {program.title}
+                  </CardTitle>
+                  <CardDescription className="text-base">by {program.employer}</CardDescription>
+                </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6 border-t border-border/50">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-foreground-secondary">{program.duration}</span>
-                  <span className="font-medium text-success-600">{program.spots} spots left</span>
+                  <span className="font-semibold text-success-600">{program.spots} spots left</span>
                 </div>
               </CardContent>
             </Card>
@@ -243,23 +247,22 @@ function ProgramsPreviewSection() {
 
 function CTASection() {
   return (
-    <section className="py-20 md:py-32 bg-primary text-primary-foreground">
+    <section className="py-24 md:py-36 bg-secondary/30">
       <div className="container-page">
         <div className="max-w-3xl mx-auto text-center stagger-children">
-          <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight mb-6">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold tracking-tight mb-8">
             Ready to Launch Your Career?
           </h2>
-          <p className="text-lg opacity-80 mb-10">
+          <p className="text-lg md:text-xl text-foreground-secondary mb-12 leading-relaxed">
             Join hundreds of graduates who found meaningful employment through Workstream. 
             Your next opportunity is waiting.
           </p>
           <Button 
-            variant="accent" 
-            size="xl" 
+            variant="accent"
+            size="lg" 
             asChild
-            className="shadow-xl"
           >
-            <Link href="/sign-up" className="gap-2">
+            <Link href="/sign-up" className="flex items-center gap-3">
               Create Your Profile
               <ArrowRight className="h-5 w-5" />
             </Link>
