@@ -58,10 +58,29 @@ export default function OnboardingPage() {
     setError(null);
 
     try {
+      if (!user) {
+        throw new Error("User not loaded");
+      }
+
       const token = await getToken();
       if (!token) {
         throw new Error("Not authenticated");
       }
+
+      // Sync user with backend first (creates user record if doesn't exist)
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/sync`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          clerkId: user.id,
+          email: user.primaryEmailAddress?.emailAddress,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          imageUrl: user.imageUrl,
+        }),
+      });
 
       // Update user profile with all info
       await api.users.updateProfile(token, {
