@@ -40,6 +40,9 @@ importers:
         specifier: ^4.1.18
         version: 4.1.18
     devDependencies:
+      '@tailwindcss/postcss':
+        specifier: ^4.1.18
+        version: 4.1.18
       '@types/node':
         specifier: ^20
         version: 20.19.28
@@ -49,6 +52,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.3(@types/react@19.2.8)
+      postcss:
+        specifier: ^8.5.6
+        version: 8.5.6
       typescript:
         specifier: ^5
         version: 5.9.3
@@ -74,6 +80,9 @@ importers:
         specifier: ^4.1.18
         version: 4.1.18
     devDependencies:
+      '@tailwindcss/postcss':
+        specifier: ^4.1.18
+        version: 4.1.18
       '@types/node':
         specifier: ^20
         version: 20.19.28
@@ -83,6 +92,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.3(@types/react@19.2.8)
+      postcss:
+        specifier: ^8.5.6
+        version: 8.5.6
       typescript:
         specifier: ^5
         version: 5.9.3
@@ -160,6 +172,9 @@ importers:
         specifier: ^4.1.18
         version: 4.1.18
     devDependencies:
+      '@tailwindcss/postcss':
+        specifier: latest
+        version: 4.1.18
       '@types/node':
         specifier: latest
         version: 25.0.8
@@ -169,6 +184,9 @@ importers:
       '@types/react-dom':
         specifier: latest
         version: 19.2.3(@types/react@19.2.8)
+      postcss:
+        specifier: latest
+        version: 8.5.6
       typescript:
         specifier: latest
         version: 5.9.3

@@ -18,9 +18,11 @@
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "postcss": "latest",
     "typescript": "latest"
   }
 }
