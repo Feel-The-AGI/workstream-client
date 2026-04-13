@@ -99,6 +99,60 @@ export interface ProgramDetailResponse {
   };
 }
 
+export interface Payment {
+  id: string;
+  amount: number;
+  status: string;
+  paidAt: string | null;
+}
+
+export interface Application {
+  id: string;
+  applicationNumber: string;
+  status: string;
+  motivationLetter: string | null;
+  submittedAt: string | null;
+  createdAt: string;
+  program: Program & { university: University; employer: Employer };
+  payments: Payment[];
+}
+
+export interface Document {
+  id: string;
+  type: string;
+  name: string;
+  fileName: string;
+  fileUrl: string;
+  fileSize: number;
+  mimeType: string;
+  verificationStatus: string;
+  parsedData: unknown | null;
+  uploadedAt: string;
+}
+
+export interface UserProfile {
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+  email: string;
+  imageUrl: string | null;
+  role: string;
+  student: {
+    id: string;
+    phone: string | null;
+    location: string | null;
+    bio: string | null;
+    dateOfBirth: string | null;
+    institution: string | null;
+    degree: string | null;
+    fieldOfStudy: string | null;
+    currentYear: number | null;
+    expectedGraduation: string | null;
+    cgpa: number | null;
+    profileComplete: boolean;
+  } | null;
+}
+
 // API Functions
 export const api = {
   // Programs
@@ -131,7 +185,7 @@ export const api = {
   // Users (requires token)
   users: {
     getProfile: (token: string) =>
-      apiRequest<{ profile: unknown }>("/users/profile", {
+      apiRequest<{ profile: UserProfile }>("/users/profile", {
         token,
       }),
     updateProfile: (token: string, data: unknown) =>
@@ -145,21 +199,21 @@ export const api = {
   // Applications (requires token)
   applications: {
     list: (token: string) =>
-      apiRequest<{ applications: unknown[] }>("/applications", {
+      apiRequest<{ applications: Application[] }>("/applications", {
         token,
       }),
     get: (token: string, id: string) =>
-      apiRequest<{ application: unknown }>(`/applications/${id}`, {
+      apiRequest<{ application: Application }>(`/applications/${id}`, {
         token,
       }),
     create: (token: string, data: { programId: string; motivationLetter?: string }) =>
-      apiRequest<{ application: unknown }>("/applications", {
+      apiRequest<{ application: Application }>("/applications", {
         method: "POST",
         token,
         body: data,
       }),
     submit: (token: string, id: string) =>
-      apiRequest<{ application: unknown }>(`/applications/${id}/submit`, {
+      apiRequest<{ application: Application }>(`/applications/${id}/submit`, {
         method: "POST",
         token,
       }),
@@ -180,5 +234,43 @@ export const api = {
         method: "POST",
         token,
       }),
+    create: (
+      token: string,
+      data: {
+        type: string;
+        name: string;
+        fileName: string;
+        fileUrl: string;
+        fileSize: number;
+        mimeType: string;
+      }
+    ) =>
+      apiRequest<{ document: unknown }>("/documents", {
+        method: "POST",
+        token,
+        body: data,
+      }),
+  },
+
+  // Payments (requires token)
+  payments: {
+    initialize: (
+      token: string,
+      data: {
+        applicationId: string;
+        amount: number;
+        email: string;
+        callbackUrl: string;
+      }
+    ) =>
+      apiRequest<{ authorization_url: string; reference: string }>(
+        "/payments/initialize",
+        { method: "POST", token, body: data }
+      ),
+    verify: (token: string, reference: string) =>
+      apiRequest<{ payment: unknown; application: unknown }>(
+        `/payments/verify/${reference}`,
+        { token }
+      ),
   },
 };

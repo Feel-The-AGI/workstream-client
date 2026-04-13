@@ -50,6 +50,12 @@ export interface University {
   id: string;
   name: string;
   shortName: string | null;
+  email: string | null;
+  phone: string | null;
+  city: string | null;
+  region: string | null;
+  website: string | null;
+  description: string | null;
   isVerified: boolean;
   _count?: { programs: number; admins: number };
 }
@@ -58,6 +64,12 @@ export interface Employer {
   id: string;
   name: string;
   industry: string | null;
+  city: string | null;
+  size: string | null;
+  email: string | null;
+  phone: string | null;
+  website: string | null;
+  description: string | null;
   isVerified: boolean;
   _count?: { programs: number; admins: number };
 }
@@ -68,6 +80,10 @@ export interface Program {
   slug: string;
   field: string;
   status: string;
+  totalSlots: number;
+  availableSlots: number;
+  applicationDeadline: string;
+  startDate: string;
   university: { name: string; shortName: string | null };
   employer: { name: string };
   _count?: { applications: number };
@@ -77,6 +93,8 @@ export interface Application {
   id: string;
   applicationNumber: string;
   status: string;
+  createdAt: string;
+  submittedAt: string | null;
   student: {
     user: { firstName: string | null; lastName: string | null; email: string }
   };

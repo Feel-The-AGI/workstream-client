@@ -35,7 +35,8 @@ async function apiRequest<T>(endpoint: string, options: RequestOptions = {}): Pr
   return response.json();
 }
 
-// Types
+// ─── Types ───────────────────────────────────────────────────────────────────
+
 export interface University {
   id: string;
   name: string;
@@ -79,6 +80,8 @@ export interface Student {
   highestEducation: string | null;
   institution: string | null;
   graduationYear: number | null;
+  gpa: string | null;
+  grades: string | null;
   user: {
     firstName: string | null;
     lastName: string | null;
@@ -87,10 +90,21 @@ export interface Student {
   };
 }
 
+export interface ApplicationDocument {
+  document: {
+    id: string;
+    type: string;
+    name: string;
+    fileUrl: string;
+    isVerified?: boolean;
+  };
+}
+
 export interface Application {
   id: string;
   applicationNumber: string;
   status: string;
+  aiScore: number | null;
   meetsRequirements: boolean | null;
   motivationLetter: string | null;
   submittedAt: string | null;
@@ -98,84 +112,74 @@ export interface Application {
   reviewNotes: string | null;
   student: Student;
   program: Program;
-  documents: Array<{
-    document: {
-      id: string;
-      type: string;
-      name: string;
-      fileUrl: string;
-    };
-  }>;
+  documents: ApplicationDocument[];
+}
+
+export interface DashboardStats {
+  totalPrograms: number;
+  totalApplications: number;
+  shortlisted: number;
+  enrolled: number;
+  underReview: number;
 }
 
 export interface DashboardResponse {
-  university: University;
-  stats: {
-    totalPrograms: number;
-    activePrograms: number;
-    totalApplications: number;
-    pendingReview: number;
-    shortlisted: number;
-  };
-  programs: Program[];
+  university?: University;
+  stats: DashboardStats;
+  recentApplications: Application[];
+  programs?: Program[];
 }
 
-// API Functions
+// ─── API Functions ────────────────────────────────────────────────────────────
+
 export const universityApi = {
   // Dashboard
   dashboard: (token: string) =>
     apiRequest<DashboardResponse>("/university/dashboard", { token }),
 
   // Programs
-  programs: {
-    list: (token: string) =>
-      apiRequest<{ programs: Program[] }>("/university/programs", { token }),
-    create: (token: string, data: Partial<Program> & { employerId: string }) =>
-      apiRequest<{ program: Program }>("/university/programs", {
-        method: "POST",
-        token,
-        body: data,
-      }),
-    update: (token: string, id: string, data: Partial<Program>) =>
-      apiRequest<{ program: Program }>(`/university/programs/${id}`, {
-        method: "PATCH",
-        token,
-        body: data,
-      }),
-    publish: (token: string, id: string) =>
-      apiRequest<{ program: Program }>(`/university/programs/${id}/publish`, {
-        method: "POST",
-        token,
-      }),
-  },
+  programs: (token: string) =>
+    apiRequest<{ programs: Program[] }>("/university/programs", { token }),
 
-  // Applications
-  applications: {
-    list: (token: string, params?: { status?: string; programId?: string }) => {
-      const searchParams = new URLSearchParams();
-      if (params?.status) searchParams.set("status", params.status);
-      if (params?.programId) searchParams.set("programId", params.programId);
-      const query = searchParams.toString();
-      return apiRequest<{ applications: Application[] }>(
-        `/university/applications${query ? `?${query}` : ""}`,
-        { token }
-      );
-    },
-    get: (token: string, id: string) =>
-      apiRequest<{ application: Application }>(`/university/applications/${id}`, { token }),
-    update: (
-      token: string,
-      id: string,
-      data: { status: string; reviewNotes?: string; rejectionReason?: string; interviewDate?: string }
-    ) =>
-      apiRequest<{ application: Application }>(`/university/applications/${id}`, {
-        method: "PATCH",
-        token,
-        body: data,
-      }),
-  },
+  publishProgram: (token: string, id: string) =>
+    apiRequest<{ program: Program }>(`/university/programs/${id}/publish`, {
+      method: "POST",
+      token,
+    }),
 
-  // Employers (for program creation)
+  createProgram: (token: string, data: Record<string, unknown>) =>
+    apiRequest<{ program: Program }>("/university/programs", {
+      method: "POST",
+      token,
+      body: data,
+    }),
+
   employers: (token: string) =>
     apiRequest<{ employers: Employer[] }>("/university/employers", { token }),
+
+  // Applications (flat helpers used by dashboard pages)
+  applications: (token: string, params?: { status?: string; programId?: string }) => {
+    const searchParams = new URLSearchParams();
+    if (params?.status) searchParams.set("status", params.status);
+    if (params?.programId) searchParams.set("programId", params.programId);
+    const query = searchParams.toString();
+    return apiRequest<{ applications: Application[] }>(
+      `/university/applications${query ? `?${query}` : ""}`,
+      { token }
+    );
+  },
+
+  getApplication: (token: string, id: string) =>
+    apiRequest<{ application: Application }>(`/university/applications/${id}`, { token }),
+
+  reviewApplication: (
+    token: string,
+    id: string,
+    data: { status: string; reviewNotes?: string }
+  ) =>
+    apiRequest<{ application: Application }>(`/university/applications/${id}`, {
+      method: "PATCH",
+      token,
+      body: data,
+    }),
 };

@@ -3,27 +3,13 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Workstream - Employer Portal",
-  description: "Employer portal for reviewing and hiring candidates",
+  title: "Workstream — Employer Portal",
+  description: "Review candidates and manage your hiring programs on Workstream.",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-  
-  if (!clerkKey || clerkKey.includes("your_")) {
-    return (
-      <html lang="en" suppressHydrationWarning>
-        <body className="font-sans antialiased" suppressHydrationWarning>
-          {children}
-        </body>
-      </html>
-    );
-  }
-
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
