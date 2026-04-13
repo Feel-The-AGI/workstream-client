@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { Clock, Users, Building2, GraduationCap, Banknote, Calendar } from "lucide-react";
 import { Button } from "@workstream/ui/components/button";
@@ -117,7 +118,9 @@ export default async function ProgramsPage({ searchParams }: PageProps) {
             </p>
           </div>
           {/* Client island for filter tabs */}
-          <FieldFilterTabs activeField={field || "ALL"} />
+          <Suspense fallback={<div className="h-10" />}>
+            <FieldFilterTabs activeField={field || "ALL"} />
+          </Suspense>
         </div>
       </div>
 
